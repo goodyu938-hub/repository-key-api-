@@ -387,3 +387,60 @@ a.rbx:hover { border-color: var(--line2); background: var(--s3); }
   .cd-seg { min-width: 48px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ============ Admin v2 — หลังบ้านแบบใหม่ ============ */
+.adm-h h1 { font-size: 20px; }
+.tabs { width: fit-content; max-width: 100%; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: 14px; background: var(--s1); }
+.tabs button { border-bottom: 0; margin: 0; padding: 8px 18px; border-radius: 10px; }
+.tabs button.on { background: var(--s3); color: var(--tx); }
+.tbl-wrap { border-radius: 16px; }
+.tbl th { background: rgba(255, 255, 255, 0.02); }
+.tbl tbody tr { transition: background 0.15s; }
+.tbl tbody tr:hover { background: rgba(102, 116, 255, 0.05); }
+
+.modal { border-radius: 24px; }
+.modal-wide { width: min(940px, 100%); }
+.modal-h { padding: 18px 26px; }
+.modal-b { padding: 22px 26px 28px; }
+
+.kd { gap: 16px; }
+.kd-hero { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; padding: 24px; border-radius: 20px; border: 1px solid var(--line2); background: linear-gradient(135deg, rgba(102, 116, 255, 0.12), rgba(102, 116, 255, 0) 65%), var(--s2); }
+.kd-hero-l { display: grid; gap: 8px; min-width: 0; }
+.kd-hero-l > small { color: var(--mu); font-size: 13px; }
+.kd-key { font-family: var(--mono); font-size: clamp(17px, 3.6vw, 26px); font-weight: 600; letter-spacing: 0.03em; color: var(--tx); word-break: break-all; }
+.kd-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+.kd-hero-r { min-width: 320px; }
+
+.kd-two { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; }
+.kd-two.kd-one { grid-template-columns: 1fr; }
+.kd-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+.kd-card { display: grid; gap: 14px; align-content: start; min-width: 0; padding: 18px; border-radius: 18px; background: var(--s2); border: 1px solid var(--line); }
+.kd-card-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.kd-card-h h4 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--tx); font-weight: 600; }
+.kd-card-h h4 .ic { color: var(--ac); }
+.kd-card-f { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.kd-pill { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 99px; font-size: 12px; color: var(--mu); background: var(--s3); border: 1px solid var(--line); }
+.kd-pill.on { color: var(--ok); background: rgba(74, 222, 128, 0.09); border-color: rgba(74, 222, 128, 0.25); }
+.kd-hw-box { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line2); }
+.kd-hw-box code { flex: 1; min-width: 0; font-size: 13px; line-height: 1.5; color: var(--tx); word-break: break-all; }
+.kd-hw-empty { color: var(--dim); font-size: 13.5px; border-style: dashed; }
+
+.kd-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.kd-stat { display: grid; gap: 5px; padding: 13px 15px; border-radius: 14px; background: var(--s2); border: 1px solid var(--line); min-width: 0; }
+.kd-stat span { display: flex; align-items: center; gap: 6px; color: var(--dim); font-size: 12px; }
+.kd-stat b { font-weight: 500; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.kd-act { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kd-act .btn { width: 100%; padding: 0 10px; }
+.kd-ext { display: grid; gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+.kd-lbl { color: var(--mu); font-size: 13px; font-weight: 500; }
+.kd-card .tl-sm { max-height: 360px; }
+
+@media (max-width: 760px) {
+  .kd-hero { grid-template-columns: 1fr; padding: 18px; gap: 18px; }
+  .kd-hero-r { min-width: 0; }
+  .kd-two, .kd-cols { grid-template-columns: 1fr; }
+  .kd-stats { grid-template-columns: repeat(2, 1fr); }
+  .modal-b { padding: 16px; }
+  .modal-h { padding: 14px 16px; }
+}

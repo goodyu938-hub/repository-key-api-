@@ -18,7 +18,7 @@ export default async function Home({ searchParams }) {
         <section className="hero">
           <div className="hero-logo"><img src="/uploads/logo/logo-640.webp" alt="" width="84" height="84" /></div>
           <h1>{s.site_name}</h1>
-          <p>เข้าสู่ระบบด้วย Discord เพื่อผูกคีย์ ดูเวลาที่เหลือ รีเซ็ต HWID และรีคีย์ได้ด้วยตัวเอง</p>
+          <p>เข้าสู่ระบบด้วย Discord เพื่อดูเวลาที่เหลือ รีเซ็ต HWID และรีคีย์ได้ด้วยตัวเอง (ใช้สคริปต์ไม่ต้องล็อกอิน)</p>
           <div className="hero-cta">
             {authError && <div className="chk-err" role="alert"><Icon n="alert" size={16} />{authError}</div>}
             {discordConfigured() ? (

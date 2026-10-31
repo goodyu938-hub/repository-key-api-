@@ -144,7 +144,7 @@ export default function Keys() {
           <table className="tbl">
             <thead><tr>
               <th className="c-sel"><input type="checkbox" checked={allOn} onChange={() => setSel(allOn ? new Set() : new Set(data.rows.map((r) => r.id)))} aria-label="เลือกทั้งหมด" /></th>
-              <th>คีย์</th><th>สถานะ</th><th>เวลาที่เหลือ</th><th>เจ้าของ</th><th />
+              <th>คีย์</th><th>สถานะ</th><th>เวลาที่เหลือ</th><th>HWID</th><th>เจ้าของ</th><th />
             </tr></thead>
             <tbody>
               {data.rows.map((r) => (
@@ -153,6 +153,7 @@ export default function Keys() {
                   <td><button className="lnk mono" onClick={() => openKey(r.id)}>{r.key}</button>{r.label && <small className="dim sub">{r.label}</small>}</td>
                   <td><StatusBadge status={r.status} /></td>
                   <td><MiniCountdown status={r.status} expiresAt={r.expires_at} duration={r.duration_seconds} offset={offset} /></td>
+                  <td>{r.hwid ? <span className="hw"><Icon n="cpu" size={14} /><code>{r.hwid.length > 12 ? r.hwid.slice(0, 10) + '…' : r.hwid}</code></span> : <span className="dim">—</span>}</td>
                   <td>{r.owner ? <button className="owner" onClick={() => openUser(r.owner.id)}><Avatar p={r.owner} size={24} /><span>{r.owner.name}</span></button> : <span className="dim">—</span>}</td>
                   <td className="tbl-act">
                     <button className="icon-btn" title="รายละเอียด" onClick={() => openKey(r.id)}><Icon n="eye" size={15} /></button>

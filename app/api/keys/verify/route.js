@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
  *   GET  /api/keys/verify?key=NEXUSHUBX-XXXX-XXXX-XXXX&hwid=รหัสเครื่อง&roblox_id=123&roblox_name=ชื่อในเกม
  *   POST /api/keys/verify   {"key":"...","hwid":"..."}
  *   check=1 ดูสถานะเฉยๆ (ไม่เริ่มนับเวลา ไม่ผูกเครื่อง)   format=text ผลแบบข้อความสั้น
- * คีย์ต้องถูกผูกกับบัญชี Discord (ล็อกอินที่เว็บ) ก่อน ไม่งั้นตอบ DISCORD_REQUIRED
+ * ไม่ต้องล็อกอิน Discord — ใส่คีย์แล้วใช้ได้เลย (ผูกเครื่องอัตโนมัติครั้งแรก)
  * ป้องกันเดาคีย์: นับเฉพาะครั้งที่ตรวจไม่ผ่าน (ไม่พบคีย์/รูปแบบผิด) ต่อ IP
  */
 const CORS = {
