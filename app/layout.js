@@ -6,6 +6,7 @@ import '@fontsource/jetbrains-mono/600.css';
 import './globals.css';
 import { getSettings } from '@/lib/settings';
 import { ToastProvider } from '@/components/ui';
+import Guard from '@/components/Guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="th">
       <body>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <Guard />
+          {children}
+        </ToastProvider>
         <noscript><div style={{ padding: 24, textAlign: 'center' }}>ต้องเปิด JavaScript เพื่อใช้งานเว็บนี้</div></noscript>
       </body>
     </html>
