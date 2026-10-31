@@ -3,16 +3,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Icon from './Icons';
 import { AdminCtx } from './admin/ctx';
-import Overview from './admin/Overview';
 import Keys from './admin/Keys';
 import Users, { UserModal } from './admin/Users';
 import Settings from './admin/Settings';
 import KeyDetail from './admin/KeyDetail';
 
-const TABS = [['overview', 'ภาพรวม', 'grid', Overview], ['keys', 'คีย์', 'key', Keys], ['users', 'ผู้ใช้', 'users', Users], ['settings', 'ตั้งค่า', 'sliders', Settings]];
+const TABS = [['keys', 'คีย์', 'key', Keys], ['users', 'ผู้ใช้', 'users', Users], ['settings', 'ตั้งค่า', 'sliders', Settings]];
 
 export default function Admin({ serverTime }) {
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState('keys');
   const [keyId, setKeyId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [tick, setTick] = useState(0); // รีเฟรชรายการหลังแก้ไขในหน้าต่างรายละเอียด

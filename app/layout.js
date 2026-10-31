@@ -14,7 +14,7 @@ const SITE = (process.env.SITE_URL || 'https://flexozy.site').replace(/\/+$/, ''
 const DESC = 'จัดการคีย์ รีเซ็ต HWID รีคีย์ และดูโปรไฟล์ Roblox ของคุณ';
 
 export async function generateMetadata() {
-  let s = { site_name: 'Flexozy Keys' };
+  let s = { site_name: 'Nexus Hub X' };
   try { s = await getSettings(); } catch {}
   return {
     metadataBase: new URL(SITE),

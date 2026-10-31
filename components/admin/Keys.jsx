@@ -6,16 +6,17 @@ import { MiniCountdown } from '../Countdown';
 import { Avatar } from '../ProfileCard';
 import { CopyBtn, Empty, Modal, Spinner, StatusBadge, Switch, useToast } from '../ui';
 import Confirm from './Confirm';
+import Stats from './Stats';
 import { useAdmin } from './ctx';
 
-const PRESETS = [['1 ชม.', 3600], ['1 วัน', 86400], ['3 วัน', 259200], ['7 วัน', 604800], ['30 วัน', 2592000], ['90 วัน', 7776000], ['365 วัน', 31536000], ['ตลอดชีพ', 0]];
+const PRESETS = [['1 วัน', 86400], ['7 วัน', 604800], ['30 วัน', 2592000], ['90 วัน', 7776000], ['ตลอดชีพ', 0]];
 const UNITS = [['นาที', 60], ['ชั่วโมง', 3600], ['วัน', 86400]];
 const STATUSES = [['', 'ทั้งหมด'], ['active', 'ใช้งานได้'], ['unused', 'ยังไม่เริ่ม'], ['expired', 'หมดอายุ'], ['revoked', 'ระงับ'], ['bound', 'ผูกเครื่อง']];
 const LIMIT = 25;
 
 function Generator({ onDone }) {
   const toast = useToast();
-  const [f, setF] = useState({ qty: 1, prefix: '', label: '', note: '', discordId: '', startMode: 'activate', hwidLock: true });
+  const [f, setF] = useState({ qty: 1, label: '', note: '', discordId: '', startMode: 'activate', hwidLock: true });
   const [preset, setPreset] = useState(2592000);
   const [custom, setCustom] = useState({ n: '', u: 86400 });
   const [busy, setBusy] = useState(false);
@@ -54,23 +55,27 @@ function Generator({ onDone }) {
           </div>
         )}
       </div>
-      <div className="grid3">
-        <label className="field"><span>จำนวน (สูงสุด 500)</span><input className="input" type="number" min="1" max="500" value={f.qty} onChange={(e) => set('qty', e.target.value)} /></label>
-        <label className="field"><span>คำนำหน้าคีย์</span><input className="input mono" value={f.prefix} onChange={(e) => set('prefix', e.target.value.toUpperCase())} placeholder="ค่าเริ่มต้นในตั้งค่า" maxLength={12} /></label>
-        <label className="field"><span>ชื่อแพ็กเกจ</span><input className="input" value={f.label} onChange={(e) => set('label', e.target.value)} placeholder="เช่น VIP 30 วัน" maxLength={60} /></label>
+      <div className="gen-row">
+        <label className="field gen-qty"><span>จำนวนคีย์</span><input className="input" type="number" min="1" max="500" value={f.qty} onChange={(e) => set('qty', e.target.value)} /></label>
+        <button className="btn btn-primary btn-lg" disabled={busy}>{busy ? <Spinner /> : <Icon n="key" size={18} />}ออกคีย์</button>
       </div>
-      <div className="grid2">
-        <label className="field"><span>ให้ Discord ID (ไม่บังคับ)</span><input className="input mono" value={f.discordId} onChange={(e) => set('discordId', e.target.value.trim())} placeholder="ผูกเป็นของคนนี้ทันที (ไม่ใส่ = ให้เจ้าของล็อกอินแล้วผูกเอง)" /></label>
-        <label className="field"><span>โน้ต</span><input className="input" value={f.note} onChange={(e) => set('note', e.target.value)} maxLength={120} /></label>
-      </div>
-      <div className="gen-opts">
-        <div className="seg">
-          <button type="button" className={f.startMode === 'activate' ? 'on' : ''} onClick={() => set('startMode', 'activate')}>นับเวลาเมื่อใช้ครั้งแรก</button>
-          <button type="button" className={f.startMode === 'issue' ? 'on' : ''} onClick={() => set('startMode', 'issue')}>นับเวลาทันทีที่ออกคีย์</button>
+      <details className="adv">
+        <summary>ตัวเลือกเพิ่มเติม</summary>
+        <div className="adv-body">
+          <div className="grid2">
+            <label className="field"><span>ชื่อแพ็กเกจ</span><input className="input" value={f.label} onChange={(e) => set('label', e.target.value)} placeholder="เช่น VIP 30 วัน" maxLength={60} /></label>
+            <label className="field"><span>โน้ต</span><input className="input" value={f.note} onChange={(e) => set('note', e.target.value)} maxLength={120} /></label>
+          </div>
+          <label className="field"><span>Discord ID เจ้าของ (ไม่ใส่ = ให้ผู้ใช้ล็อกอินแล้วผูกเอง)</span><input className="input mono" value={f.discordId} onChange={(e) => set('discordId', e.target.value.trim())} /></label>
+          <div className="gen-opts">
+            <div className="seg">
+              <button type="button" className={f.startMode === 'activate' ? 'on' : ''} onClick={() => set('startMode', 'activate')}>นับเวลาเมื่อใช้ครั้งแรก</button>
+              <button type="button" className={f.startMode === 'issue' ? 'on' : ''} onClick={() => set('startMode', 'issue')}>นับเวลาทันที</button>
+            </div>
+            <Switch checked={f.hwidLock} onChange={(v) => set('hwidLock', v)} label="ล็อกเครื่อง (HWID)" />
+          </div>
         </div>
-        <Switch checked={f.hwidLock} onChange={(v) => set('hwidLock', v)} label="ล็อกเครื่อง (HWID)" />
-      </div>
-      <button className="btn btn-primary btn-lg" disabled={busy}>{busy ? <Spinner /> : <Icon n="key" size={18} />}ออกคีย์</button>
+      </details>
 
       <Modal open={!!out} onClose={() => setOut(null)} title={`ออกคีย์แล้ว ${out?.length || 0} รายการ`}
         footer={<><button type="button" className="btn" onClick={dl}><Icon n="download" size={16} />ดาวน์โหลด .txt</button><CopyBtn text={(out || []).join('\n')} label="คัดลอกทั้งหมด" className="btn-primary" /></>}>
@@ -91,7 +96,7 @@ export default function Keys() {
   const [sel, setSel] = useState(new Set());
   const [ask, setAsk] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [gen, setGen] = useState(false);
+  const [statTick, setStatTick] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -113,9 +118,9 @@ export default function Keys() {
   const pages = Math.max(1, Math.ceil(data.total / LIMIT));
 
   return (
-    <div>
-      <button className="btn btn-primary gen-toggle" onClick={() => setGen((v) => !v)}><Icon n={gen ? 'x' : 'plus'} size={16} />{gen ? 'ปิดฟอร์ม' : 'ออกคีย์ใหม่'}</button>
-      {gen && <Generator onDone={() => { setPage(0); load(); }} />}
+    <div className="keys-page">
+      <Stats refresh={statTick} />
+      <Generator onDone={() => { setPage(0); load(); setStatTick((t) => t + 1); }} />
 
       <div className="bar-tools">
         <div className="search"><Icon n="search" size={16} /><input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหา คีย์ / Discord ID / ชื่อ Roblox / HWID / โน้ต" /></div>
@@ -139,7 +144,7 @@ export default function Keys() {
           <table className="tbl">
             <thead><tr>
               <th className="c-sel"><input type="checkbox" checked={allOn} onChange={() => setSel(allOn ? new Set() : new Set(data.rows.map((r) => r.id)))} aria-label="เลือกทั้งหมด" /></th>
-              <th>คีย์</th><th>สถานะ</th><th>เวลาที่เหลือ</th><th>HWID</th><th>เจ้าของ</th><th />
+              <th>คีย์</th><th>สถานะ</th><th>เวลาที่เหลือ</th><th>เจ้าของ</th><th />
             </tr></thead>
             <tbody>
               {data.rows.map((r) => (
@@ -148,7 +153,6 @@ export default function Keys() {
                   <td><button className="lnk mono" onClick={() => openKey(r.id)}>{r.key}</button>{r.label && <small className="dim sub">{r.label}</small>}</td>
                   <td><StatusBadge status={r.status} /></td>
                   <td><MiniCountdown status={r.status} expiresAt={r.expires_at} duration={r.duration_seconds} offset={offset} /></td>
-                  <td>{r.hwid ? <span className="hw"><Icon n="cpu" size={14} /><code>{r.hwid.length > 12 ? r.hwid.slice(0, 10) + '…' : r.hwid}</code></span> : <span className="dim">—</span>}</td>
                   <td>{r.owner ? <button className="owner" onClick={() => openUser(r.owner.id)}><Avatar p={r.owner} size={24} /><span>{r.owner.name}</span></button> : <span className="dim">—</span>}</td>
                   <td className="tbl-act">
                     <button className="icon-btn" title="รายละเอียด" onClick={() => openKey(r.id)}><Icon n="eye" size={15} /></button>
