@@ -1,7 +1,8 @@
 import { route, json, body } from '@/lib/api';
 import { q, one, tx, HttpError } from '@/lib/db';
 import { str, int, discordId, TEN_YEARS } from '@/lib/util';
-import { requireAdmin, clientIp } from '@/lib/auth';
+import { requireAdmin, clientIp, getUser } from '@/lib/auth';
+import { banUntil, strike, subjectsOf, listBans, removeBan } from '@/lib/guard';
 import { getSettings, clearSettingsCache } from '@/lib/settings';
 import { DEFAULT_SETTINGS } from '@/lib/schema';
 import { issueKeys, cleanPrefix, searchKeys, keyView, resetHwid, rekey, adminAction, summarize, logEvent } from '@/lib/keys';
@@ -13,9 +14,16 @@ export const dynamic = 'force-dynamic';
 const ACTIONS = ['revoke', 'unrevoke', 'extend', 'assign', 'note'];
 
 async function handle(req, { params }) {
+  const ip = await clientIp();
+  // คนที่ไม่ใช่แอดมินยิง API หลังบ้าน → ปฏิเสธ + แบนชั่วคราว
+  const me = await getUser();
+  if (!me || me.role !== 'admin') {
+    const subjects = subjectsOf(ip, me);
+    if (!(await banUntil(subjects))) await strike(subjects, 'พยายามเรียก API หลังบ้านโดยไม่มีสิทธิ์');
+    throw new HttpError(403, 'ปฏิเสธการเข้าถึง');
+  }
   const admin = await requireAdmin();
   const actor = 'admin:' + admin.discord_id;
-  const ip = await clientIp();
   const [res, id, act] = (await params).path;
   const m = req.method;
   const sp = new URL(req.url).searchParams;
@@ -59,6 +67,7 @@ async function handle(req, { params }) {
       const b = await body(req);
       const ids = (Array.isArray(b.ids) ? b.ids : []).map(Number).filter((n) => Number.isInteger(n) && n > 0).slice(0, 500);
       if (!ids.length) throw new HttpError(400, 'ยังไม่ได้เลือกคีย์');
+      // ลบ/ระงับ → สคริปต์ในเกมจะเช็ก /api/keys/heartbeat ทุก ~10 วิ แล้วเตะผู้เล่นออกทันที
       if (b.action === 'delete') await q('DELETE FROM kx_keys WHERE id = ANY($1)', [ids]);
       else if (b.action === 'revoke' || b.action === 'unrevoke') {
         await tx(async (c) => {
@@ -126,6 +135,12 @@ async function handle(req, { params }) {
       if (act === 'ban') await q('DELETE FROM kx_sessions WHERE user_id=$1', [r.rows[0].id]);
       return json({ ok: true });
     }
+  }
+
+  // ---------- รายการที่ถูกแบนชั่วคราว ----------
+  if (res === 'bans') {
+    if (m === 'GET') return json({ rows: await listBans(), server_time: Date.now() });
+    if (m === 'DELETE') { await removeBan(nid()); return json({ ok: true }); }
   }
 
   // ---------- ตั้งค่า ----------

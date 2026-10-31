@@ -109,7 +109,7 @@ export default function Keys() {
 
   const bulk = async (action) => {
     setBusy(true);
-    try { await api('/api/admin/keys/bulk', 'POST', { ids: [...sel], action }); toast('สำเร็จ'); setSel(new Set()); await load(); } catch (e) { toast(e.message, 'err'); }
+    try { await api('/api/admin/keys/bulk', 'POST', { ids: [...sel], action }); toast(action === 'delete' || action === 'revoke' ? 'สำเร็จ · ผู้เล่นในเกมจะถูกเตะภายใน ~10 วินาที' : 'สำเร็จ'); setSel(new Set()); await load(); } catch (e) { toast(e.message, 'err'); }
     setBusy(false); setAsk(null);
   };
   const quick = async (id, a, msg) => { try { await api(`/api/admin/keys/${id}/${a}`, 'PUT'); toast(msg); load(); } catch (e) { toast(e.message, 'err'); } };
@@ -158,7 +158,7 @@ export default function Keys() {
                   <td className="tbl-act">
                     <button className="icon-btn" title="รายละเอียด" onClick={() => openKey(r.id)}><Icon n="eye" size={15} /></button>
                     <button className="icon-btn" title="รีเซ็ต HWID" disabled={!r.hwid} onClick={() => quick(r.id, 'reset-hwid', 'รีเซ็ต HWID แล้ว')}><Icon n="refresh" size={15} /></button>
-                    <button className="icon-btn" title={r.status === 'revoked' ? 'ปลดระงับ' : 'ระงับ'} onClick={() => quick(r.id, r.status === 'revoked' ? 'unrevoke' : 'revoke', r.status === 'revoked' ? 'ปลดระงับแล้ว' : 'ระงับแล้ว')}><Icon n="ban" size={15} /></button>
+                    <button className="icon-btn" title={r.status === 'revoked' ? 'ปลดระงับ' : 'ระงับ'} onClick={() => quick(r.id, r.status === 'revoked' ? 'unrevoke' : 'revoke', r.status === 'revoked' ? 'ปลดระงับแล้ว' : 'ระงับแล้ว · ผู้เล่นในเกมจะถูกเตะภายใน ~10 วินาที')}><Icon n="ban" size={15} /></button>
                   </td>
                 </tr>
               ))}
@@ -174,7 +174,7 @@ export default function Keys() {
         <button className="btn btn-sm" disabled={page + 1 >= pages} onClick={() => setPage((p) => p + 1)}>ถัดไป</button>
       </div>
 
-      <Confirm open={ask === 'delete'} danger yes="ลบถาวร" busy={busy} onNo={() => setAsk(null)} onYes={() => bulk('delete')} title={`ลบ ${sel.size} คีย์?`}><p>ลบแล้วกู้คืนไม่ได้</p></Confirm>
+      <Confirm open={ask === 'delete'} danger yes="ลบถาวร" busy={busy} onNo={() => setAsk(null)} onYes={() => bulk('delete')} title={`ลบ ${sel.size} คีย์?`}><p>ลบแล้วกู้คืนไม่ได้ ผู้เล่นที่ใช้คีย์เหล่านี้อยู่ในเกมจะ<b>ถูกเตะออกทันที</b></p></Confirm>
     </div>
   );
 }

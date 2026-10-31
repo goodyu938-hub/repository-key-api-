@@ -2,6 +2,32 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { Spinner, Switch, useToast } from '../ui';
+import { fmtDate } from '../api';
+import Icon from '../Icons';
+
+function Bans() {
+  const toast = useToast();
+  const [rows, setRows] = useState(null);
+  const load = () => api('/api/admin/bans').then((r) => setRows(r.rows)).catch((e) => toast(e.message, 'err'));
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const unban = async (id) => { try { await api(`/api/admin/bans/${id}`, 'DELETE'); toast('ปลดแบนแล้ว'); load(); } catch (e) { toast(e.message, 'err'); } };
+  return (
+    <section className="card">
+      <h3><Icon n="shield" size={17} />ผู้ที่ถูกแบนชั่วคราว</h3>
+      <p className="hint">คนที่ไม่ใช่แอดมินแล้วพยายามเข้าหลังบ้านจะถูกปฏิเสธและแบนอัตโนมัติ (15 นาที ผิดซ้ำเพิ่มเป็น 2 เท่า สูงสุด 24 ชม.)</p>
+      {rows === null ? <div className="loading"><Spinner size={18} /></div> : rows.length === 0 ? <p className="dim">ตอนนี้ไม่มีใครถูกแบน</p> : (
+        <ul className="bans">
+          {rows.map((b) => (
+            <li key={b.id}>
+              <div><code>{b.subject.replace(/^ip:/, 'IP ').replace(/^u:/, 'Discord ')}</code><small className="dim">ผิด {b.strikes} ครั้ง · แบนถึง {fmtDate(b.until)}</small></div>
+              <button type="button" className="btn btn-sm" onClick={() => unban(b.id)}>ปลดแบน</button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
 
 export default function Settings() {
   const toast = useToast();
@@ -41,6 +67,7 @@ export default function Settings() {
         <p className="hint">แอดมินไม่ติดข้อจำกัดนี้ — รีเซ็ตให้ได้เสมอ</p>
       </section>
       <div><button className="btn btn-primary" disabled={busy}>{busy && <Spinner />}บันทึกการตั้งค่า</button></div>
+      <Bans />
     </form>
   );
 }

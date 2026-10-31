@@ -32,14 +32,14 @@ export default function KeyDetail({ id, onClose, onChanged }) {
     setBusy(true);
     try {
       const r = await api(`/api/admin/keys/${id}/${a}`, 'PUT', body);
-      toast(r.key ? `คีย์ใหม่: ${r.key}` : msg || 'สำเร็จ');
+      toast(r.key ? `คีย์ใหม่: ${r.key} · ผู้เล่นที่ใช้คีย์เก่าจะถูกเตะออกจากเกม` : msg || 'สำเร็จ');
       await load(); onChanged?.();
     } catch (e) { toast(e.message, 'err'); }
     setBusy(false);
   };
   const remove = async () => {
     setBusy(true);
-    try { await api(`/api/admin/keys/${id}`, 'DELETE'); toast('ลบคีย์แล้ว'); onChanged?.(); onClose(); } catch (e) { toast(e.message, 'err'); }
+    try { await api(`/api/admin/keys/${id}`, 'DELETE'); toast('ลบคีย์แล้ว · ผู้เล่นในเกมจะถูกเตะภายใน ~10 วินาที'); onChanged?.(); onClose(); } catch (e) { toast(e.message, 'err'); }
     setBusy(false);
   };
 
@@ -103,15 +103,15 @@ export default function KeyDetail({ id, onClose, onChanged }) {
               <div className="kd-act">
                 <button className="btn" disabled={busy} onClick={() => act('reset-hwid-quota', null, 'รีเซ็ต HWID และคืนโควต้าแล้ว')}><Icon n="gift" size={16} />รีเซ็ต + คืนโควต้า</button>
                 <button className="btn" disabled={busy} onClick={() => act('rekey', null)}><Icon n="shuffle" size={16} />รีคีย์</button>
-                <button className={`btn ${revoked ? '' : 'btn-warn'}`} disabled={busy} onClick={() => act(revoked ? 'unrevoke' : 'revoke', null, revoked ? 'ปลดระงับแล้ว' : 'ระงับแล้ว')}><Icon n="ban" size={16} />{revoked ? 'ปลดระงับ' : 'ระงับ'}</button>
+                <button className={`btn ${revoked ? '' : 'btn-warn'}`} disabled={busy} onClick={() => act(revoked ? 'unrevoke' : 'revoke', null, revoked ? 'ปลดระงับแล้ว' : 'ระงับแล้ว · ผู้เล่นในเกมจะถูกเตะภายใน ~10 วินาที')}><Icon n="ban" size={16} />{revoked ? 'ปลดระงับ' : 'ระงับ'}</button>
                 <button className="btn btn-danger" disabled={busy} onClick={() => setDel(true)}><Icon n="trash" size={16} />ลบคีย์</button>
               </div>
               {!k.lifetime && (
                 <div className="kd-ext">
                   <span className="kd-lbl">เพิ่ม / ลดเวลา (วัน)</span>
                   <div className="chips">
-                    {[1, 7, 30].map((n) => <button type="button" key={n} className="chip" onClick={() => setDays(String(n))}>+{n}</button>)}
-                    <button type="button" className="chip" onClick={() => setDays('-1')}>-1</button>
+                    {[1, 7, 30].map((n) => <button type="button" key={n} className="chip" onClick={() => setDays(String(n))}>+{n} วัน</button>)}
+                    <button type="button" className="chip" onClick={() => setDays('-1')}>−1 วัน</button>
                   </div>
                   <div className="inline-form">
                     <input className="input" type="number" step="0.5" value={days} onChange={(e) => setDays(e.target.value)} aria-label="จำนวนวัน" />
@@ -119,7 +119,7 @@ export default function KeyDetail({ id, onClose, onChanged }) {
                   </div>
                 </div>
               )}
-              <details className="adv">
+              <details className="adv" open>
                 <summary>เจ้าของ (Discord) และโน้ต</summary>
                 <div className="adv-body">
                   {k.owner ? (
@@ -154,7 +154,7 @@ export default function KeyDetail({ id, onClose, onChanged }) {
           </div>
         </div>
       )}
-      <Confirm open={del} danger yes="ลบถาวร" busy={busy} onNo={() => setDel(false)} onYes={remove} title="ลบคีย์นี้?"><p>ลบแล้วกู้คืนไม่ได้ สคริปต์ที่ใช้คีย์นี้จะตรวจไม่ผ่านทันที</p></Confirm>
+      <Confirm open={del} danger yes="ลบถาวร" busy={busy} onNo={() => setDel(false)} onYes={remove} title="ลบคีย์นี้?"><p>ลบแล้วกู้คืนไม่ได้ ผู้เล่นที่กำลังใช้คีย์นี้อยู่ในเกมจะ<b>ถูกเตะออกทันที</b> (ภายใน ~10 วินาที)</p></Confirm>
     </Modal>
   );
 }
